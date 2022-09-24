@@ -5,3 +5,5 @@ Using Packer to create a RedHat Linux Amazon Machine Images (AMI)
 ```
 packer build template.json
 ```
+
+https://www.packer.io/plugins/builders/amazon/ebs

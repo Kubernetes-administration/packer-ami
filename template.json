@@ -1,34 +1,46 @@
 {
-    "builders":[
-       {
-          "access_key":"{{user `aws_access_key`}}",
-          "ami_name":"rhel8-packer-linux-aws-{{timestamp}}",
-          "instance_type":"t2.micro",
-          "region":"us-east-1",
-          "secret_key":"{{user `aws_secret_key`}}",
-          "source_ami":"ami-06640050dc3f556bb",
-          "type":"amazon-ebs",
-          "ssh_username":"ec2-user",
-          "tags":{
-             "Name":"Packer-{{timestamp}}",
-             "Application":"app"
-          }
-       }
+    "builders": [
+        {
+            "access_key": "{{user `aws_access_key`}}",
+            "ami_name": "rhel8-packer-linux-aws-{{timestamp}}",
+            "instance_type": "t2.micro",
+            "region": "us-east-1",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "source_ami": "ami-06640050dc3f556bb",
+            "type": "amazon-ebs",
+            "ssh_username": "ec2-user",
+            "launch_block_device_mappings": [
+                {
+                    "device_name": "/dev/sda1",
+                    "volume_size": 15,
+                    "volume_type": "gp2",
+                    "delete_on_termination": true
+                }
+            ],
+            "run_tags": {
+                "Name": "packer-instance-{{timestamp}}",
+                "Application": "app"
+            },
+            "tags": {
+                "Name": "packer-ami-{{timestamp}}",
+                "Application": "app"
+            }
+        }
     ],
-    "provisioners":[
-       {
-          "type":"shell",
-          "script":"./update.sh"
-       }
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "./update.sh"
+        }
     ],
-    "post-processors":[
-       {
-          "type":"manifest",
-          "output":"manifest.json",
-          "strip_path":true,
-          "custom_data":{
-             "source_ami_name":"{{ build `SourceAMIName` }}"
-          }
-       }
+    "post-processors": [
+        {
+            "type": "manifest",
+            "output": "manifest.json",
+            "strip_path": true,
+            "custom_data": {
+                "source_ami_name": "{{ build `SourceAMIName` }}"
+            }
+        }
     ]
- }
+}
